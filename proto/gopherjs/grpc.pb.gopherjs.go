@@ -16,6 +16,7 @@
 		BluetoothNetworkService
 		BluetoothControllerSettings
 		BluetoothControllerInformation
+		BluetoothDevice
 		TriggerActionSet
 		TriggerAction
 		TriggerServiceStarted
@@ -1425,6 +1426,159 @@ func (m *BluetoothControllerInformation) UnmarshalFromReader(reader jspb.Reader)
 
 // Unmarshal unmarshals a BluetoothControllerInformation from a slice of bytes.
 func (m *BluetoothControllerInformation) Unmarshal(rawBytes []byte) (*BluetoothControllerInformation, error) {
+	reader := jspb.NewReader(rawBytes)
+
+	m = m.UnmarshalFromReader(reader)
+
+	if err := reader.Err(); err != nil {
+		return nil, err
+	}
+
+	return m, nil
+}
+
+type BluetoothDevice struct {
+	Address string
+	Name    string
+	Alias   string
+	Paired  bool
+	Trusted bool
+	Blocked bool
+	Rssi    int32
+}
+
+// GetAddress gets the Address of the BluetoothDevice.
+func (m *BluetoothDevice) GetAddress() (x string) {
+	if m == nil {
+		return x
+	}
+	return m.Address
+}
+
+// GetName gets the Name of the BluetoothDevice.
+func (m *BluetoothDevice) GetName() (x string) {
+	if m == nil {
+		return x
+	}
+	return m.Name
+}
+
+// GetAlias gets the Alias of the BluetoothDevice.
+func (m *BluetoothDevice) GetAlias() (x string) {
+	if m == nil {
+		return x
+	}
+	return m.Alias
+}
+
+// GetPaired gets the Paired of the BluetoothDevice.
+func (m *BluetoothDevice) GetPaired() (x bool) {
+	if m == nil {
+		return x
+	}
+	return m.Paired
+}
+
+// GetTrusted gets the Trusted of the BluetoothDevice.
+func (m *BluetoothDevice) GetTrusted() (x bool) {
+	if m == nil {
+		return x
+	}
+	return m.Trusted
+}
+
+// GetBlocked gets the Blocked of the BluetoothDevice.
+func (m *BluetoothDevice) GetBlocked() (x bool) {
+	if m == nil {
+		return x
+	}
+	return m.Blocked
+}
+
+// GetRssi gets the Rssi of the BluetoothDevice.
+func (m *BluetoothDevice) GetRssi() (x int32) {
+	if m == nil {
+		return x
+	}
+	return m.Rssi
+}
+
+// MarshalToWriter marshals BluetoothDevice to the provided writer.
+func (m *BluetoothDevice) MarshalToWriter(writer jspb.Writer) {
+	if m == nil {
+		return
+	}
+
+	if len(m.Address) > 0 {
+		writer.WriteString(1, m.Address)
+	}
+
+	if len(m.Name) > 0 {
+		writer.WriteString(2, m.Name)
+	}
+
+	if len(m.Alias) > 0 {
+		writer.WriteString(3, m.Alias)
+	}
+
+	if m.Paired {
+		writer.WriteBool(4, m.Paired)
+	}
+
+	if m.Trusted {
+		writer.WriteBool(5, m.Trusted)
+	}
+
+	if m.Blocked {
+		writer.WriteBool(6, m.Blocked)
+	}
+
+	if m.Rssi != 0 {
+		writer.WriteInt32(7, m.Rssi)
+	}
+
+	return
+}
+
+// Marshal marshals BluetoothDevice to a slice of bytes.
+func (m *BluetoothDevice) Marshal() []byte {
+	writer := jspb.NewWriter()
+	m.MarshalToWriter(writer)
+	return writer.GetResult()
+}
+
+// UnmarshalFromReader unmarshals a BluetoothDevice from the provided reader.
+func (m *BluetoothDevice) UnmarshalFromReader(reader jspb.Reader) *BluetoothDevice {
+	for reader.Next() {
+		if m == nil {
+			m = &BluetoothDevice{}
+		}
+
+		switch reader.GetFieldNumber() {
+		case 1:
+			m.Address = reader.ReadString()
+		case 2:
+			m.Name = reader.ReadString()
+		case 3:
+			m.Alias = reader.ReadString()
+		case 4:
+			m.Paired = reader.ReadBool()
+		case 5:
+			m.Trusted = reader.ReadBool()
+		case 6:
+			m.Blocked = reader.ReadBool()
+		case 7:
+			m.Rssi = reader.ReadInt32()
+		default:
+			reader.SkipField()
+		}
+	}
+
+	return m
+}
+
+// Unmarshal unmarshals a BluetoothDevice from a slice of bytes.
+func (m *BluetoothDevice) Unmarshal(rawBytes []byte) (*BluetoothDevice, error) {
 	reader := jspb.NewReader(rawBytes)
 
 	m = m.UnmarshalFromReader(reader)
@@ -6471,6 +6625,8 @@ type P4WNP1Client interface {
 	DeployBluetoothAgentSettings(ctx context.Context, in *BluetoothAgentSettings, opts ...grpcweb.CallOption) (*BluetoothAgentSettings, error)
 	SetBluetoothNetworkService(ctx context.Context, in *BluetoothNetworkService, opts ...grpcweb.CallOption) (*Empty, error)
 	DeployBluetoothSettings(ctx context.Context, in *BluetoothSettings, opts ...grpcweb.CallOption) (*BluetoothSettings, error)
+	GetBluetoothSettings(ctx context.Context, in *Empty, opts ...grpcweb.CallOption) (*BluetoothSettings, error)
+	BluetoothScan(ctx context.Context, in *Empty, opts ...grpcweb.CallOption) (P4WNP1_BluetoothScanClient, error)
 	StoreBluetoothSettings(ctx context.Context, in *BluetoothRequestSettingsStorage, opts ...grpcweb.CallOption) (*Empty, error)
 	GetStoredBluetoothSettings(ctx context.Context, in *StringMessage, opts ...grpcweb.CallOption) (*BluetoothSettings, error)
 	DeployStoredBluetoothSettings(ctx context.Context, in *StringMessage, opts ...grpcweb.CallOption) (*BluetoothSettings, error)
@@ -6627,6 +6783,47 @@ func (c *p4WNP1Client) DeployBluetoothSettings(ctx context.Context, in *Bluetoot
 	}
 
 	return new(BluetoothSettings).Unmarshal(resp)
+}
+
+func (c *p4WNP1Client) GetBluetoothSettings(ctx context.Context, in *Empty, opts ...grpcweb.CallOption) (*BluetoothSettings, error) {
+	resp, err := c.client.RPCCall(ctx, "GetBluetoothSettings", in.Marshal(), opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	return new(BluetoothSettings).Unmarshal(resp)
+}
+
+func (c *p4WNP1Client) BluetoothScan(ctx context.Context, in *Empty, opts ...grpcweb.CallOption) (P4WNP1_BluetoothScanClient, error) {
+	srv, err := c.client.NewClientStream(ctx, false, true, "BluetoothScan", opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	err = srv.SendMsg(in.Marshal())
+	if err != nil {
+		return nil, err
+	}
+
+	return &p4WNP1BluetoothScanClient{srv}, nil
+}
+
+type P4WNP1_BluetoothScanClient interface {
+	Recv() (*BluetoothDevice, error)
+	grpcweb.ClientStream
+}
+
+type p4WNP1BluetoothScanClient struct {
+	grpcweb.ClientStream
+}
+
+func (x *p4WNP1BluetoothScanClient) Recv() (*BluetoothDevice, error) {
+	resp, err := x.RecvMsg()
+	if err != nil {
+		return nil, err
+	}
+
+	return new(BluetoothDevice).Unmarshal(resp)
 }
 
 func (c *p4WNP1Client) StoreBluetoothSettings(ctx context.Context, in *BluetoothRequestSettingsStorage, opts ...grpcweb.CallOption) (*Empty, error) {

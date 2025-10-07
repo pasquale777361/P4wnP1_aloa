@@ -300,6 +300,52 @@ func (s *server) DeployBluetoothSettings(ctx context.Context, settings *pb.Bluet
 	return
 }
 
+func (s *server) GetBluetoothSettings(ctx context.Context, e *pb.Empty) (settings *pb.BluetoothSettings, err error) {
+	settings = &pb.BluetoothSettings{}
+	ci, err_ci := s.GetBluetoothControllerInformation(ctx, e)
+	as, err_as := s.GetBluetoothAgentSettings(ctx, e)
+
+	if err_ci != nil {
+		return &pb.BluetoothSettings{Ci: ci, As: as}, err_ci
+	}
+	if err_as != nil {
+		return &pb.BluetoothSettings{Ci: ci, As: as}, err_as
+	}
+
+	settings.Ci = ci
+	settings.As = as
+	return settings, nil
+}
+
+func (s *server) BluetoothScan(e *pb.Empty, stream pb.P4WNP1_BluetoothScanServer) (err error) {
+	if !s.rootSvc.SubSysBluetooth.IsServiceAvailable() {
+		return bluetooth.ErrBtSvcNotAvailable
+	}
+
+	discovery, err := s.rootSvc.SubSysBluetooth.Controller.DiscoverDevices()
+	if err != nil {
+		return err
+	}
+	defer s.rootSvc.SubSysBluetooth.Controller.StopDiscovery()
+
+	for dev := range discovery {
+		device := &pb.BluetoothDevice{
+			Address: dev.Address,
+			Name:    dev.Name,
+			Alias:   dev.Alias,
+			Paired:  dev.Paired,
+			Trusted: dev.Trusted,
+			Blocked: dev.Blocked,
+			Rssi:    dev.RSSI,
+		}
+		if err := stream.Send(device); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (s *server) StoreBluetoothSettings(ctx context.Context, req *pb.BluetoothRequestSettingsStorage) (e *pb.Empty, err error) {
 	defer s.rootSvc.SubSysEvent.Emit(ConstructEventNotifyStateChange(common_web.STATE_CHANGE_EVT_TYPE_STORED_BLUETOOTH_SETTINGS_LIST))
 	e = &pb.Empty{}
