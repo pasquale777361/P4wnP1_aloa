@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option go_package = "github.com/mame82/P4wnP1_aloa/proto";
+
 package P4wnP1_grpc;
 
 service P4WNP1 {
@@ -10,6 +12,8 @@ service P4WNP1 {
     rpc DeployBluetoothAgentSettings (BluetoothAgentSettings) returns (BluetoothAgentSettings) {}
     rpc SetBluetoothNetworkService (BluetoothNetworkService) returns (Empty) {}
     rpc DeployBluetoothSettings (BluetoothSettings) returns (BluetoothSettings) {}
+    rpc GetBluetoothSettings (Empty) returns (BluetoothSettings) {}
+    rpc BluetoothScan(Empty) returns (stream BluetoothDevice) {}
 
     rpc StoreBluetoothSettings(BluetoothRequestSettingsStorage) returns (Empty) {}
     rpc GetStoredBluetoothSettings(StringMessage) returns (BluetoothSettings) {}
@@ -209,6 +213,16 @@ message BluetoothControllerInformation {
     bool service_network_server_nap = 10;
     bool service_network_server_panu = 11;
     bool service_network_server_gn = 12;
+}
+
+message BluetoothDevice {
+    string address = 1;
+    string name = 2;
+    string alias = 3;
+    bool paired = 4;
+    bool trusted = 5;
+    bool blocked = 6;
+    int32 rssi = 7;
 }
 
 /* Triggers, Actions and resulting TriggerActions */

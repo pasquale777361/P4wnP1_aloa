@@ -135,6 +135,16 @@ func (c *Controller) StartDiscovery() error {
 func (c *Controller) StopDiscovery() error {
 	return c.adapter.StopDiscovery()
 }
+
+func (c *Controller) DiscoverDevices() (<-chan *toolz.Device1, error) {
+	err := c.adapter.StartDiscovery()
+	if err != nil {
+		return nil, err
+	}
+
+	return c.adapter.GetDiscoveryChannel()
+}
+
 /* Properties */
 func (c *Controller) GetAddress() (res net.HardwareAddr, err error) {
 	return c.adapter.GetAddress()

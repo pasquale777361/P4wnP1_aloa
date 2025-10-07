@@ -3,8 +3,8 @@
 # has to be run from 'build_support' subfolder
 cd ..
 echo "compiling P4wnP1_cli and P4wnP1_service ..."
-env GOOS=linux GOARCH=arm GOARM=6 go build -o build/P4wnP1_service cmd/P4wnP1_service/P4wnP1_service.go
-env GOOS=linux GOARCH=arm GOARM=6 go build -o build/P4wnP1_cli cmd/P4wnP1_cli/P4wnP1_cli.go
+env GOOS=linux GOARCH=arm GOARM=7 go build -o build/P4wnP1_service cmd/P4wnP1_service/P4wnP1_service.go
+env GOOS=linux GOARCH=arm GOARM=7 go build -o build/P4wnP1_cli cmd/P4wnP1_cli/P4wnP1_cli.go
 
 echo "compiling web client to JavaScript ..."
 cd web_client
