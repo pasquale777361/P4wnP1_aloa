@@ -1,6 +1,6 @@
 # P4wnP1 A.L.O.A.
 
-P4wnP1 A.L.O.A. by MaMe82 is a framework which turns a Rapsberry Pi Zero W into a flexible, low-cost platform for 
+P4wnP1 A.L.O.A. by MaMe82 is a framework which turns a Rapsberry Pi Zero W or Raspberry Pi Zero 2 W into a flexible, low-cost platform for
 pentesting, red teaming and physical engagements ... or into "A Little Offensive Appliance".
 
 ## 0. How to install
@@ -121,6 +121,35 @@ the P4wnP1 core. This means:
 - includes an overview and editor for TriggerActions
 - full templating support for all features described so far
 - the WebClient is a Single Page Application, once loaded everything runs client side, only gRPC request are exchanged
+
+### Bluetooth CLI
+The `bluetooth` command allows for fine-grained control over the Bluetooth adapter.
+
+**Get Bluetooth Settings**
+To retrieve the current Bluetooth settings, use the `get` subcommand:
+```
+P4wnP1_cli bluetooth get
+```
+
+**Set Bluetooth Settings**
+To modify the Bluetooth settings, use the `set` subcommand with the desired flags. For example, to change the device alias and make it discoverable, you would run:
+```
+P4wnP1_cli bluetooth set --alias "MyP4wnP1" --discoverable
+```
+
+**Power On/Off**
+To power on or off the Bluetooth controller, use the `on` and `off` subcommands:
+```
+P4wnP1_cli bluetooth on
+P4wnP1_cli bluetooth off
+```
+
+**Scan for Devices**
+To scan for nearby Bluetooth devices, use the `scan` subcommand:
+```
+P4wnP1_cli bluetooth scan
+```
+This will display a list of discovered devices, including their address, name, and RSSI.
 
 ### Automation
 The automation approach of the old P4wnP1 version (static bash scripts) couldn't be used anymore.
@@ -1556,7 +1585,6 @@ gives talks on the USB topic and honors Open Source solutions, all in all a grea
 This isn't a full fledged ToDo list, but some milestones are left and I'd be happy to receive som community support on
 this
 - Porting the full HID covert channel functionality to Go core (I'm on my own with that)
-- **add Bluetooth configuration command for CLI**
 - Create additional keyboard layouts (currently br, de, es, fr, gb, it, ru and us are supported) 
 - extend Bluetooth functionality to allow connection to other discoverable devices (authentication and trust)
 - move WiFi KARMA functionality from dedicated python tool to P4wnP1 core (with webclient support))
